@@ -1,16 +1,45 @@
-name: 'JavaScript Action Template'
-
-description: 'Add description here'
+name: Update Deployment Board
+description: Adds deployment Issues to an Automated Deployment Project Board for visual tracking of what has been deployed to each environment.
 
 inputs:
-  input-1:
-    description: 'Add a description here'
+  workflow-actor:
+    description: The GitHub user who triggered the workflow
+    required: true
+  token:
+    description: 'A token with `repo_deployment` permissions to create and update issues, workflows using this action should be granted `permissions` of `deployments: write`'
+    required: true
+  environment:
+    description: The environment the release was deployed to, i.e. [DEV|QA|STAGE|DEMO|UAT|PROD]
+    required: true
+  release-ref:
+    description: The branch, tag or SHA that was deployed
+    required: true
+  deployment-status:
+    description: The status of the deployment [error|failure|success]
+    required: true
+  deployment-description:
+    description: Any description or message about the deployment
+    required: false
+  deployment-auto-inactivate:
+    description: |
+      Automatically mark prior environment deployments inactive, only use 'true' for environments that do not
+      have multiple instances, expects 'true' or 'false', defaults to 'false'
+    required: false
+    default: 'false'
+  entity:
+    description: The entity that is deployed, i.e. "proj-app", "proj-infrastruction" or "proj-db"
+    required: true
+  instance:
+    description: A freeform identifier to distinguish separately deployed instances of the entity in the same environment. Typical uses would be to name a slot and/or region, e.g "NA26", "NA26-slot1", "NA27-blue"
+    required: true
+  workflow-run-url:
+    description: The url of the workflow run, i.e."https://github.com/[owner]/[repo]/actions/runs/[workflow run id]"
     required: true
 
 outputs:
-  output-1:
-    description: 'Add a description here'
+  github-deployment-id:
+    description: The id of the GitHub deployment object
 
 runs:
-  using: 'node16'
-  main: 'dist/index.js'
+  using: node20
+  main: dist/index.js
