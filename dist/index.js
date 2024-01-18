@@ -39367,8 +39367,6 @@ var require_library = __commonJS({
         'deployment-description',
         notRequiredArgOptions
       );
-      const deployment_auto_inactivate =
-        core2.getInput('deployment-auto-inactivate', notRequiredArgOptions) == 'true';
       const entity = core2.getInput('entity', requiredArgOptions);
       const instance = core2.getInput('instance', requiredArgOptions);
       const workflow_run_url = core2.getInput('workflow-run-url', requiredArgOptions);
@@ -39381,7 +39379,6 @@ var require_library = __commonJS({
         release_ref,
         deployment_status,
         deployment_description,
-        deployment_auto_inactivate,
         entity,
         instance,
         workflow_run_url,

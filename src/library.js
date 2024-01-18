@@ -48,8 +48,6 @@ function setup() {
   const release_ref = core.getInput('release-ref', requiredArgOptions);
   const deployment_status = core.getInput('deployment-status', requiredArgOptions);
   const deployment_description = core.getInput('deployment-description', notRequiredArgOptions);
-  const deployment_auto_inactivate =
-    core.getInput('deployment-auto-inactivate', notRequiredArgOptions) == 'true';
   const entity = core.getInput('entity', requiredArgOptions);
   const instance = core.getInput('instance', requiredArgOptions);
   const workflow_run_url = core.getInput('workflow-run-url', requiredArgOptions);
@@ -63,7 +61,6 @@ function setup() {
     release_ref,
     deployment_status,
     deployment_description,
-    deployment_auto_inactivate,
     entity,
     instance,
     workflow_run_url,
