@@ -19,7 +19,6 @@ class context {
     release_ref,
     deployment_status,
     deployment_description,
-    deployment_auto_inactivate,
     entity,
     instance,
     workflow_run_url,
@@ -32,7 +31,6 @@ class context {
     this.release_ref = release_ref;
     this.deployment_status = deployment_status;
     this.deployment_description = deployment_description;
-    this.deployment_auto_inactivate = deployment_auto_inactivate;
     this.entity = entity;
     this.instance = instance;
     this.workflow_run_url = workflow_run_url;

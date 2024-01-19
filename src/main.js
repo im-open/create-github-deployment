@@ -2,8 +2,8 @@ const core = require('@actions/core');
 const { setup } = require('./library.js');
 const { createDeployment } = require('./deployments.js');
 
-async function run(setupContext) {
-  await createDeployment(setupContext);
+async function run(context) {
+  await createDeployment(context);
 }
 
 try {
@@ -13,6 +13,6 @@ try {
 } catch (error) {
   //Anything that shows up here should be a re-thrown error where the detailed error was already logged.
   //We can set a generic failure message because the more detailed one should already have been logged.
-  core.setFailed('An error occurred creating a GitHub deployment.');
+  core.setFailed(`An error occurred creating a GitHub deployment: ${error}`);
   return;
 }

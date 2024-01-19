@@ -71,6 +71,8 @@ async function inactivatePriorDeployments(context, currentDeploymentNodeId) {
 async function createDeployment(context) {
   const octokit = new Octokit({ auth: context.token });
 
+  console.log('Creating deployment for ' + context.entity + ': ', context);
+
   // create deployment record
   const deployment = (
     await octokit.rest.repos.createDeployment({

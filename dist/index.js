@@ -39336,7 +39336,6 @@ var require_library = __commonJS({
         release_ref,
         deployment_status,
         deployment_description,
-        deployment_auto_inactivate,
         entity,
         instance,
         workflow_run_url,
@@ -39349,7 +39348,6 @@ var require_library = __commonJS({
         this.release_ref = release_ref;
         this.deployment_status = deployment_status;
         this.deployment_description = deployment_description;
-        this.deployment_auto_inactivate = deployment_auto_inactivate;
         this.entity = entity;
         this.instance = instance;
         this.workflow_run_url = workflow_run_url;
@@ -39555,6 +39553,7 @@ var require_deployments = __commonJS({
     }
     async function createDeployment2(context) {
       const octokit = new Octokit({ auth: context.token });
+      console.log('Creating deployment for ' + context.entity + ': ', context);
       const deployment = (
         await octokit.rest.repos.createDeployment({
           owner: context.owner,
@@ -39608,15 +39607,15 @@ var require_deployments = __commonJS({
 var core = require_core();
 var { setup } = require_library();
 var { createDeployment } = require_deployments();
-async function run(setupContext) {
-  await createDeployment(setupContext);
+async function run(context) {
+  await createDeployment(context);
 }
 try {
   const setupContext = setup();
   const runPromise = new Promise((resolve, reject) => resolve(run(setupContext)));
   runPromise.then(deploymentId => core.setOutput('github-deployment-id', deploymentId));
 } catch (error) {
-  core.setFailed('An error occurred creating a GitHub deployment.');
+  core.setFailed(`An error occurred creating a GitHub deployment: ${error}`);
   return;
 }
 /*! Bundled license information:
