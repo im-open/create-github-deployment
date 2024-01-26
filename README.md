@@ -1,6 +1,6 @@
 # create-github-deployment
 
-This action creates GitHub Deployment and Deployment Status records.  It can be used in conjunction with tooling that reads GitHub deployments and deployment statuses to see the disposition of deployments.  This action defaults the `deployment.task` to `workflowdeploy` and is designed to work with an internal dashboard that utilizes custom payload data.
+This action creates GitHub Deployments and Deployment Statuses through [GitHub's API](https://docs.github.com/en/rest/deployments). This action defaults the `deployment.task` to `workflowdeploy` and is designed to work with an internal dashboard that utilizes custom payload data.
 
 The `deployment.payload` is customized to have these values included:
 ```json
