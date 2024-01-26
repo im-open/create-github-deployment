@@ -9,7 +9,7 @@ inputs:
     description: 'A token with `repo_deployment` permissions to create and update issues, workflows using this action should be granted `permissions` of `deployments: write`'
     required: true
   environment:
-    description: The environment the release was deployed to, i.e. [DEV|QA|STAGE|DEMO|UAT|PROD]
+    description: The name of a GitHub environment the release was deployed to, i.e. [Dev|QA|Stage|Demo|UAT|Prod]. It will be set in the standard `environment` property of the deployment object.
     required: true
   release-ref:
     description: The branch, tag or SHA that was deployed
