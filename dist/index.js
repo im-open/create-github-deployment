@@ -39338,7 +39338,8 @@ var require_library = __commonJS({
         deployment_description,
         entity,
         instance,
-        workflow_run_url,
+        server_url,
+        workflow_run_id,
         owner,
         repo
       ) {
@@ -39350,7 +39351,8 @@ var require_library = __commonJS({
         this.deployment_description = deployment_description;
         this.entity = entity;
         this.instance = instance;
-        this.workflow_run_url = workflow_run_url;
+        this.server_url = server_url;
+        this.workflow_run_id = workflow_run_id;
         this.owner = owner;
         this.repo = repo;
       }
@@ -39367,7 +39369,8 @@ var require_library = __commonJS({
       );
       const entity = core2.getInput('entity', requiredArgOptions);
       const instance = core2.getInput('instance', requiredArgOptions);
-      const workflow_run_url = core2.getInput('workflow-run-url', requiredArgOptions);
+      const server_url = github.context.serverUrl;
+      const workflow_run_id = github.context.runId;
       const owner = github.context.repo.owner;
       const repo = github.context.repo.repo;
       return new context(
@@ -39379,7 +39382,8 @@ var require_library = __commonJS({
         deployment_description,
         entity,
         instance,
-        workflow_run_url,
+        server_url,
+        workflow_run_id,
         owner,
         repo
       );
@@ -39565,7 +39569,7 @@ var require_deployments = __commonJS({
           payload: {
             entity: context.entity,
             instance: context.instance,
-            workflow_run_url: context.workflow_run_url,
+            workflow_run_url: `${context.server_url}/${context.owner}/${context.repo}/actions/runs/${context.workflow_run_id}`,
             workflow_actor: context.workflow_actor
           }
         })

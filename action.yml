@@ -26,9 +26,6 @@ inputs:
   instance:
     description: A freeform identifier to distinguish separately deployed instances of the entity in the same environment. Typical uses would be to name a slot and/or region, e.g "NA26", "NA26-slot1", "NA27-blue", "Primary", "Secondary", etc.
     required: true
-  workflow-run-url:
-    description: The url of the workflow run, i.e."https://github.com/[owner]/[repo]/actions/runs/[workflow run id]"
-    required: true
 
 outputs:
   github-deployment-id:

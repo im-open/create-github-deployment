@@ -86,7 +86,7 @@ async function createDeployment(context) {
       payload: {
         entity: context.entity,
         instance: context.instance,
-        workflow_run_url: context.workflow_run_url,
+        workflow_run_url: `${context.server_url}/${context.owner}/${context.repo}/actions/runs/${context.workflow_run_id}`,
         workflow_actor: context.workflow_actor
       }
     })

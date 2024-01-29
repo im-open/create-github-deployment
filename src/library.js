@@ -21,7 +21,8 @@ class context {
     deployment_description,
     entity,
     instance,
-    workflow_run_url,
+    server_url,
+    workflow_run_id,
     owner,
     repo
   ) {
@@ -33,7 +34,8 @@ class context {
     this.deployment_description = deployment_description;
     this.entity = entity;
     this.instance = instance;
-    this.workflow_run_url = workflow_run_url;
+    this.server_url = server_url;
+    this.workflow_run_id = workflow_run_id;
     this.owner = owner;
     this.repo = repo;
   }
@@ -48,7 +50,8 @@ function setup() {
   const deployment_description = core.getInput('deployment-description', notRequiredArgOptions);
   const entity = core.getInput('entity', requiredArgOptions);
   const instance = core.getInput('instance', requiredArgOptions);
-  const workflow_run_url = core.getInput('workflow-run-url', requiredArgOptions);
+  const server_url = github.context.serverUrl;
+  const workflow_run_id = github.context.runId;
   const owner = github.context.repo.owner;
   const repo = github.context.repo.repo;
 
@@ -61,7 +64,8 @@ function setup() {
     deployment_description,
     entity,
     instance,
-    workflow_run_url,
+    server_url,
+    workflow_run_id,
     owner,
     repo
   );
