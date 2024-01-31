@@ -39557,7 +39557,6 @@ var require_deployments = __commonJS({
     }
     async function createDeployment2(context) {
       const octokit = new Octokit({ auth: context.token });
-      console.log('Creating deployment for ' + context.entity + ': ', context);
       const deployment = (
         await octokit.rest.repos.createDeployment({
           owner: context.owner,
@@ -39612,12 +39611,16 @@ var core = require_core();
 var { setup } = require_library();
 var { createDeployment } = require_deployments();
 async function run(context) {
-  await createDeployment(context);
+  return await createDeployment(context);
 }
 try {
   const setupContext = setup();
   const runPromise = new Promise((resolve, reject) => resolve(run(setupContext)));
-  runPromise.then(deploymentId => core.setOutput('github-deployment-id', deploymentId));
+  runPromise.then(deploymentId => {
+    delete setupContext.token;
+    console.log('Created deployment for ' + setupContext.entity + ': ', setupContext);
+    core.setOutput('github-deployment-id', deploymentId);
+  });
 } catch (error) {
   core.setFailed(`An error occurred creating a GitHub deployment: ${error}`);
   return;
