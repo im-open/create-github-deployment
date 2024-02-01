@@ -50,9 +50,8 @@ on:
         description: 'The branch, tag or sha to deploy '
         required: false
 
-# Permissions needed to add GitHub Deployment and Deployment
-# status objects
 permissions:
+  # Required for the create-github-deployment action
   deployments: write
 
 jobs:
@@ -84,6 +83,8 @@ jobs:
 
       ...
 ```
+
+*_Make sure to add `permission.deployments=write` to ensure the action can create deployments properly_*
 
 ## Custom Payload
 
