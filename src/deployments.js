@@ -82,6 +82,7 @@ async function createDeployment(context) {
       environment: context.environment,
       task: WORKFLOW_DEPLOY,
       auto_merge: false,
+      required_contexts: [],
 
       payload: {
         entity: context.entity,
