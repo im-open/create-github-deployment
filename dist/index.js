@@ -39519,7 +39519,6 @@ var require_deployments = __commonJS({
           d.payload.entity == context.entity &&
           d.payload.instance == context.instance
       );
-      console.log('deploymentsList', deploymentsList);
       const deploymentNodeIds = deploymentsList.map(d => d.node_id);
       const statusesQuery = `
       query($deploymentNodeIds: [ID!]!) {
@@ -39541,12 +39540,9 @@ var require_deployments = __commonJS({
       for (let i = 0; i < statuses.deployments.length; i++) {
         let deploymentQl = statuses.deployments[i];
         let deployment = deploymentsList.filter(d => d.node_id == deploymentQl.id)[0];
-        console.log('deploymentQl', deploymentQl);
-        console.log('deployment', deployment);
         for (let j = 0; j < deploymentQl.statuses.nodes.length; j++) {
           const status = deploymentQl.statuses.nodes[j];
           if (deployment.payload.instance == context.instance && status.state == 'SUCCESS') {
-            console.log('Inactivating deployment', deployment.node_id);
             await createDeploymentStatus(
               octokit,
               context.owner,
@@ -39628,7 +39624,7 @@ var core = require_core();
 var { setup } = require_library();
 var { createDeployment } = require_deployments();
 async function run(context) {
-  await createDeployment(context);
+  return await createDeployment(context);
 }
 try {
   const setupContext = setup();
