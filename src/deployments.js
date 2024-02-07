@@ -27,6 +27,8 @@ async function inactivatePriorDeployments(context, currentDeploymentNodeId) {
       d.payload.instance == context.instance
   );
 
+  console.log('deploymentsList', deploymentsList);
+
   const deploymentNodeIds = deploymentsList.map(d => d.node_id);
   const statusesQuery = `
       query($deploymentNodeIds: [ID!]!) {
@@ -51,10 +53,15 @@ async function inactivatePriorDeployments(context, currentDeploymentNodeId) {
     let deploymentQl = statuses.deployments[i];
     let deployment = deploymentsList.filter(d => d.node_id == deploymentQl.id)[0];
 
+    console.log('deploymentQl', deploymentQl);
+    console.log('deployment', deployment);
+
     for (let j = 0; j < deploymentQl.statuses.nodes.length; j++) {
       const status = deploymentQl.statuses.nodes[j];
 
       if (deployment.payload.instance == context.instance && status.state == 'SUCCESS') {
+        console.log('Inactivating deployment', deployment.node_id);
+
         await createDeploymentStatus(
           octokit,
           context.owner,
@@ -70,9 +77,6 @@ async function inactivatePriorDeployments(context, currentDeploymentNodeId) {
 
 async function createDeployment(context) {
   const octokit = new Octokit({ auth: context.token });
-
-  console.log('Creating deployment for ' + context.entity + ': ', context);
-
   // create deployment record
   const deployment = (
     await octokit.rest.repos.createDeployment({
