@@ -39629,11 +39629,7 @@ async function run(context) {
 try {
   const setupContext = setup();
   const runPromise = new Promise((resolve, reject) => resolve(run(setupContext)));
-  runPromise.then(deploymentId => {
-    delete setupContext.token;
-    console.log(`Created deployment ${deploymentId}:`, setupContext);
-    core.setOutput('github-deployment-id', deploymentId);
-  });
+  runPromise.then(deploymentId => core.setOutput('github-deployment-id', deploymentId));
 } catch (error) {
   core.setFailed(`An error occurred creating a GitHub deployment: ${error}`);
   return;
