@@ -60,7 +60,7 @@ async function inactivatePriorDeployments(context, currentDeploymentNodeId) {
           context.owner,
           context.repo,
           deployment.id,
-          context.environment,
+          `${context.environment}-${context.instance}`,
           'inactive',
           'Inactivated by workflow'
         );
@@ -81,7 +81,7 @@ async function createDeployment(context) {
       task: WORKFLOW_DEPLOY,
       auto_merge: false,
       required_contexts: [],
-      transient_environment: true,
+      // transient_environment: true,  // TODO: decide if want to make envs transient
 
       payload: {
         entity: context.entity,
@@ -101,7 +101,7 @@ async function createDeployment(context) {
       context.owner,
       context.repo,
       deployment.id,
-      context.environment,
+      `${context.environment}-${context.instance}`,
       context.deployment_status,
       context.deployment_description
     );

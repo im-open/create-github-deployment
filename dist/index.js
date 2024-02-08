@@ -39548,7 +39548,7 @@ var require_deployments = __commonJS({
               context.owner,
               context.repo,
               deployment.id,
-              context.environment,
+              `${context.environment}-${context.instance}`,
               'inactive',
               'Inactivated by workflow'
             );
@@ -39567,7 +39567,7 @@ var require_deployments = __commonJS({
           task: WORKFLOW_DEPLOY,
           auto_merge: false,
           required_contexts: [],
-          transient_environment: true,
+          // transient_environment: true,  // TODO: decide if want to make envs transient
           payload: {
             entity: context.entity,
             instance: context.instance,
@@ -39585,7 +39585,7 @@ var require_deployments = __commonJS({
           context.owner,
           context.repo,
           deployment.id,
-          context.environment,
+          `${context.environment}-${context.instance}`,
           context.deployment_status,
           context.deployment_description
         );
