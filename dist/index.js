@@ -39572,6 +39572,7 @@ var require_deployments = __commonJS({
           auto_merge: false,
           required_contexts: [],
           // transient_environment: true,  // TODO: decide if want to make envs transient
+          production_environment: true,
           payload: {
             entity: context.entity,
             instance: context.instance,
@@ -39589,27 +39590,17 @@ var require_deployments = __commonJS({
           context.owner,
           context.repo,
           deployment.id,
-          `${context.environment}-${context.instance}`,
           context.deployment_status,
           context.deployment_description
         );
       });
       return deployment.id;
     }
-    async function createDeploymentStatus(
-      octokit,
-      owner,
-      repo,
-      deployment_id,
-      environment,
-      state,
-      description
-    ) {
+    async function createDeploymentStatus(octokit, owner, repo, deployment_id, state, description) {
       const statusParams = {
         owner,
         repo,
         deployment_id,
-        environment,
         state,
         description,
         auto_inactive: false

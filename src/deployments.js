@@ -87,6 +87,7 @@ async function createDeployment(context) {
       auto_merge: false,
       required_contexts: [],
       // transient_environment: true,  // TODO: decide if want to make envs transient
+      production_environment: true,
 
       payload: {
         entity: context.entity,
@@ -106,7 +107,6 @@ async function createDeployment(context) {
       context.owner,
       context.repo,
       deployment.id,
-      `${context.environment}-${context.instance}`,
       context.deployment_status,
       context.deployment_description
     );
@@ -115,20 +115,11 @@ async function createDeployment(context) {
   return deployment.id;
 }
 
-async function createDeploymentStatus(
-  octokit,
-  owner,
-  repo,
-  deployment_id,
-  environment,
-  state,
-  description
-) {
+async function createDeploymentStatus(octokit, owner, repo, deployment_id, state, description) {
   const statusParams = {
     owner: owner,
     repo: repo,
     deployment_id: deployment_id,
-    environment: environment,
     state: state,
     description: description,
     auto_inactive: false // we will manually inactivate prior deployments
