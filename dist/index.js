@@ -39543,6 +39543,10 @@ var require_deployments = __commonJS({
         for (let j = 0; j < deploymentQl.statuses.nodes.length; j++) {
           const status = deploymentQl.statuses.nodes[j];
           if (deployment.payload.instance == context.instance && status.state == 'SUCCESS') {
+            console.log(
+              `Inactivating deployment ${deployment.id} for ${context.environment}-${context.instance}`,
+              deployment
+            );
             await createDeploymentStatus(
               octokit,
               context.owner,
