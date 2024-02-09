@@ -3,7 +3,7 @@ const { setup } = require('./library.js');
 const { createDeployment } = require('./deployments.js');
 
 async function run(context) {
-  await createDeployment(context);
+  return await createDeployment(context);
 }
 
 try {

@@ -60,6 +60,7 @@ async function inactivatePriorDeployments(context, currentDeploymentNodeId) {
           context.owner,
           context.repo,
           deployment.id,
+          context.environment,
           'inactive',
           'Inactivated by workflow'
         );
@@ -70,9 +71,6 @@ async function inactivatePriorDeployments(context, currentDeploymentNodeId) {
 
 async function createDeployment(context) {
   const octokit = new Octokit({ auth: context.token });
-
-  console.log('Creating deployment for ' + context.entity + ': ', context);
-
   // create deployment record
   const deployment = (
     await octokit.rest.repos.createDeployment({
@@ -83,6 +81,7 @@ async function createDeployment(context) {
       task: WORKFLOW_DEPLOY,
       auto_merge: false,
       required_contexts: [],
+      transient_environment: true,
 
       payload: {
         entity: context.entity,
@@ -102,6 +101,7 @@ async function createDeployment(context) {
       context.owner,
       context.repo,
       deployment.id,
+      context.environment,
       context.deployment_status,
       context.deployment_description
     );
@@ -110,11 +110,20 @@ async function createDeployment(context) {
   return deployment.id;
 }
 
-async function createDeploymentStatus(octokit, owner, repo, deployment_id, state, description) {
+async function createDeploymentStatus(
+  octokit,
+  owner,
+  repo,
+  deployment_id,
+  environment,
+  state,
+  description
+) {
   const statusParams = {
     owner: owner,
     repo: repo,
     deployment_id: deployment_id,
+    environment: environment,
     state: state,
     description: description,
     auto_inactive: false // we will manually inactivate prior deployments
