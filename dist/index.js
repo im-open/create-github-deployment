@@ -39565,6 +39565,7 @@ var require_deployments = __commonJS({
           environment: context.environment,
           task: WORKFLOW_DEPLOY,
           auto_merge: false,
+          required_contexts: [],
           payload: {
             entity: context.entity,
             instance: context.instance,
