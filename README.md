@@ -70,7 +70,7 @@ jobs:
       - name: Create GitHub Deployment
         id: defaults
         continue-on-error: true                                      # Setting to true so the job doesn't fail if updating the board fails.
-        uses: im-open/create-github-deployment@v1.0.1                # You may also reference just the major or major.minor version
+        uses: im-open/create-github-deployment@v1.0.2                # You may also reference just the major or major.minor version
         with:
           workflow-actor: ${{ github.actor }}                        # This will add the user who kicked off the workflow to the deployment payload
           token: ${{ secrets.GITHUB_TOKEN }}                         # If a different token is used, update github-login with the corresponding account

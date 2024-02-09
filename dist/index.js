@@ -39548,6 +39548,7 @@ var require_deployments = __commonJS({
               context.owner,
               context.repo,
               deployment.id,
+              context.environment,
               'inactive',
               'Inactivated by workflow'
             );
@@ -39566,6 +39567,7 @@ var require_deployments = __commonJS({
           task: WORKFLOW_DEPLOY,
           auto_merge: false,
           required_contexts: [],
+          transient_environment: true,
           payload: {
             entity: context.entity,
             instance: context.instance,
@@ -39583,17 +39585,27 @@ var require_deployments = __commonJS({
           context.owner,
           context.repo,
           deployment.id,
+          context.environment,
           context.deployment_status,
           context.deployment_description
         );
       });
       return deployment.id;
     }
-    async function createDeploymentStatus(octokit, owner, repo, deployment_id, state, description) {
+    async function createDeploymentStatus(
+      octokit,
+      owner,
+      repo,
+      deployment_id,
+      environment,
+      state,
+      description
+    ) {
       const statusParams = {
         owner,
         repo,
         deployment_id,
+        environment,
         state,
         description,
         auto_inactive: false
