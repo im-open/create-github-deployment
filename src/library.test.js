@@ -1,5 +1,5 @@
-const test = require('node:test');
-const assert = require('node:assert');
+const { assert } = require('node:assert');
+const { describe, test, expect, beforeEach } = require('@jest/globals');
 
 const { setup, INVALID_STATUS } = require('./library.js');
 
@@ -14,25 +14,26 @@ function prepTests() {
   process.env['INPUT_INSTANCE'] = 'test-instance';
 }
 
-test('invalid deployment status throws exception', () => {
-  prepTests();
+beforeEach(() => prepTests());
 
-  try {
-    const invalidStatus = 'invalid-status';
-    process.env['INPUT_DEPLOYMENT-STATUS'] = invalidStatus;
-    const testConext = setup();
-  } catch (error) {
-    assert.equal(error.name, INVALID_STATUS);
-  }
-});
+describe('deployment status', () => {
+  test('invalid deployment status throws exception', () => {
+    try {
+      const invalidStatus = 'invalid-status';
+      process.env['INPUT_DEPLOYMENT-STATUS'] = invalidStatus;
+      const testConext = setup();
+    } catch (error) {
+      expect(error.name).toBe(INVALID_STATUS);
+    }
+  });
 
-test('valid deployment status does not throw exception', () => {
-  prepTests();
-  process.env['INPUT_DEPLOYMENT-STATUS'] = 'SUCCESS';
-  try {
-    const testConext = setup();
-    assert.equal(testConext.deployment_status, 'SUCCESS');
-  } catch (error) {
-    assert.fail('Exception was thrown');
-  }
+  test('valid deployment status does not throw exception', () => {
+    process.env['INPUT_DEPLOYMENT-STATUS'] = 'SUCCESS';
+    try {
+      const testConext = setup();
+      expect(testConext.deployment_status).toBe('SUCCESS');
+    } catch (error) {
+      expect(error).toBe(undefined);
+    }
+  });
 });

@@ -27,7 +27,7 @@ jobs:
         uses: im-open/process-jest-test-results@v2.1.3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          results-file: 'jest.json'
+          results-file: './jest.json'
           report-name: 'Jest Results'
           create-status-check: true
           create-pr-comment: false
