@@ -1,5 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
+const { ALLOWED_STATUSES } = require('./deployments');
+const INVALID_STATUS = 'InvalidStatus';
 
 const requiredArgOptions = {
   required: true,
@@ -55,6 +57,10 @@ function setup() {
   const owner = github.context.repo.owner;
   const repo = github.context.repo.repo;
 
+  if (!ALLOWED_STATUSES.map(s => s.toLowerCase()).includes(deployment_status.toLowerCase())) {
+    throw { name: INVALID_STATUS, message: `Invalid deployment status: ${deployment_status}` };
+  }
+
   return new context(
     workflow_actor,
     token,
@@ -72,5 +78,6 @@ function setup() {
 }
 
 module.exports = {
+  INVALID_STATUS,
   setup
 };

@@ -31,16 +31,16 @@ When the action runs it will add a deployment and deployment status record to th
 
 ## Inputs
 
-| Parameter                | Is Required | Description                                                                                                                                                                                         |
-| ------------------------ | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `workflow-actor`         | true        | The GitHub user who triggered the workflow                                                                                                                                                          |
-| `token`                  | true        | A token with `repo_deployment` permissions to create and update issues, workflows using this action should be granted `permissions` of `deployments: write`                                         |
-| `environment`            | true        | The environment the release was deployed to, i.e. [Dev\|QA\|Stage\|Demo\|UAT\|Prod]                                                                                                                 |
-| `release-ref`            | true        | The branch, tag or SHA that was deployed                                                                                                                                                            |
-| `deployment-status`      | true        | The status of the deployment [error\|failure\|success]                                                                                                                                              |
-| `deployment-description` | false       | Any description or message about the deployment                                                                                                                                                     |
-| `entity`                 | true        | The entity that is deployed, i.e. "proj-app", "proj-infrastruction" or "proj-db"                                                                                                                    |
-| `instance`               | true        | A freeform identifier to distinguish separately deployed instances of the entity in the same environment. Typical uses would be to name a slot and/or region, e.g "NA26", "NA26-slot1", "NA27-blue" |
+| Parameter                | Is Required | Description                                                  |
+| ------------------------ | ----------- | ------------------------------------------------------------ |
+| `workflow-actor`         | true        | The GitHub user who triggered the workflow                   |
+| `token`                  | true        | A token with `repo_deployment` permissions to create and update issues, workflows using this action should be granted `permissions` of `deployments: write` |
+| `environment`            | true        | The environment the release was deployed to, i.e. `[Dev\|QA\|Stage\|Demo\|UAT\|Prod]` |
+| `release-ref`            | true        | The branch, tag or SHA that was deployed                     |
+| `deployment-status`      | true        | The status of the deployment, accepted values are `[success\|error\|failure\|inactive\|in_progress\|queued\|pending]` |
+| `deployment-description` | false       | Any description or message about the deployment              |
+| `entity`                 | true        | The entity that is deployed, i.e. `proj-app`, `proj-infrastruction` or `proj-db` |
+| `instance`               | true        | A freeform identifier to distinguish separately deployed instances of the entity in the same environment. Typical uses would be to name a slot and/or region, e.g `NA26`, `NA26-slot1`, `NA27-blue` |
 
 
 ## Outputs
@@ -81,7 +81,7 @@ jobs:
       - name: Update deployment board with Defaults
         id: defaults
         continue-on-error: true                                      # Setting to true so the job doesn't fail if updating the board fails.
-        uses: im-open/create-github-deployment@v1.0.2                # You may also reference just the major or major.minor version
+        uses: im-open/create-github-deployment@v1.0.3                # You may also reference just the major or major.minor version
         with:
           workflow-actor: ${{ github.actor }}                        # This will add the user who kicked off the workflow to the deployment payload
           token: ${{ secrets.GITHUB_TOKEN }}                         # If a different token is used, update github-login with the corresponding account

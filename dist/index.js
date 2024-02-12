@@ -39315,85 +39315,6 @@ var require_github = __commonJS({
   }
 });
 
-// src/library.js
-var require_library = __commonJS({
-  'src/library.js'(exports2, module2) {
-    var core2 = require_core();
-    var github = require_github();
-    var requiredArgOptions = {
-      required: true,
-      trimWhitespace: true
-    };
-    var notRequiredArgOptions = {
-      required: false,
-      trimWhitespace: true
-    };
-    var context = class {
-      constructor(
-        workflow_actor,
-        token,
-        environment,
-        release_ref,
-        deployment_status,
-        deployment_description,
-        entity,
-        instance,
-        server_url,
-        workflow_run_id,
-        owner,
-        repo
-      ) {
-        this.workflow_actor = workflow_actor;
-        this.token = token;
-        this.environment = environment;
-        this.release_ref = release_ref;
-        this.deployment_status = deployment_status;
-        this.deployment_description = deployment_description;
-        this.entity = entity;
-        this.instance = instance;
-        this.server_url = server_url;
-        this.workflow_run_id = workflow_run_id;
-        this.owner = owner;
-        this.repo = repo;
-      }
-    };
-    function setup2() {
-      const workflow_actor = core2.getInput('workflow-actor', requiredArgOptions);
-      const token = core2.getInput('token', requiredArgOptions);
-      const environment = core2.getInput('environment', requiredArgOptions);
-      const release_ref = core2.getInput('release-ref', requiredArgOptions);
-      const deployment_status = core2.getInput('deployment-status', requiredArgOptions);
-      const deployment_description = core2.getInput(
-        'deployment-description',
-        notRequiredArgOptions
-      );
-      const entity = core2.getInput('entity', requiredArgOptions);
-      const instance = core2.getInput('instance', requiredArgOptions);
-      const server_url = github.context.serverUrl;
-      const workflow_run_id = github.context.runId;
-      const owner = github.context.repo.owner;
-      const repo = github.context.repo.repo;
-      return new context(
-        workflow_actor,
-        token,
-        environment,
-        release_ref,
-        deployment_status,
-        deployment_description,
-        entity,
-        instance,
-        server_url,
-        workflow_run_id,
-        owner,
-        repo
-      );
-    }
-    module2.exports = {
-      setup: setup2
-    };
-  }
-});
-
 // node_modules/@octokit/plugin-request-log/dist-node/index.js
 var require_dist_node11 = __commonJS({
   'node_modules/@octokit/plugin-request-log/dist-node/index.js'(exports2, module2) {
@@ -39497,6 +39418,15 @@ var require_deployments = __commonJS({
     var { Octokit } = require_dist_node12();
     var { graphql } = require_dist_node6();
     var WORKFLOW_DEPLOY = 'workflowdeploy';
+    var ALLOWED_STATUSES = [
+      'success',
+      'error',
+      'failure',
+      'inactive',
+      'in_progress',
+      'queued',
+      'pending'
+    ];
     async function inactivatePriorDeployments(context, currentDeploymentNodeId) {
       const octokit = new Octokit({ auth: context.token });
       const octokitGraphQl = graphql.defaults({
@@ -39614,7 +39544,93 @@ var require_deployments = __commonJS({
       const status = await octokit.rest.repos.createDeploymentStatus(statusParams);
     }
     module2.exports = {
+      ALLOWED_STATUSES,
       createDeployment: createDeployment2
+    };
+  }
+});
+
+// src/library.js
+var require_library = __commonJS({
+  'src/library.js'(exports2, module2) {
+    var core2 = require_core();
+    var github = require_github();
+    var { ALLOWED_STATUSES } = require_deployments();
+    var INVALID_STATUS = 'InvalidStatus';
+    var requiredArgOptions = {
+      required: true,
+      trimWhitespace: true
+    };
+    var notRequiredArgOptions = {
+      required: false,
+      trimWhitespace: true
+    };
+    var context = class {
+      constructor(
+        workflow_actor,
+        token,
+        environment,
+        release_ref,
+        deployment_status,
+        deployment_description,
+        entity,
+        instance,
+        server_url,
+        workflow_run_id,
+        owner,
+        repo
+      ) {
+        this.workflow_actor = workflow_actor;
+        this.token = token;
+        this.environment = environment;
+        this.release_ref = release_ref;
+        this.deployment_status = deployment_status;
+        this.deployment_description = deployment_description;
+        this.entity = entity;
+        this.instance = instance;
+        this.server_url = server_url;
+        this.workflow_run_id = workflow_run_id;
+        this.owner = owner;
+        this.repo = repo;
+      }
+    };
+    function setup2() {
+      const workflow_actor = core2.getInput('workflow-actor', requiredArgOptions);
+      const token = core2.getInput('token', requiredArgOptions);
+      const environment = core2.getInput('environment', requiredArgOptions);
+      const release_ref = core2.getInput('release-ref', requiredArgOptions);
+      const deployment_status = core2.getInput('deployment-status', requiredArgOptions);
+      const deployment_description = core2.getInput(
+        'deployment-description',
+        notRequiredArgOptions
+      );
+      const entity = core2.getInput('entity', requiredArgOptions);
+      const instance = core2.getInput('instance', requiredArgOptions);
+      const server_url = github.context.serverUrl;
+      const workflow_run_id = github.context.runId;
+      const owner = github.context.repo.owner;
+      const repo = github.context.repo.repo;
+      if (!ALLOWED_STATUSES.map(s => s.toLowerCase()).includes(deployment_status.toLowerCase())) {
+        throw { name: INVALID_STATUS, message: `Invalid deployment status: ${deployment_status}` };
+      }
+      return new context(
+        workflow_actor,
+        token,
+        environment,
+        release_ref,
+        deployment_status,
+        deployment_description,
+        entity,
+        instance,
+        server_url,
+        workflow_run_id,
+        owner,
+        repo
+      );
+    }
+    module2.exports = {
+      INVALID_STATUS,
+      setup: setup2
     };
   }
 });
