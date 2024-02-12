@@ -30,7 +30,6 @@ jobs:
           results-file: './jest.json'
           report-name: 'Jest Results'
           create-status-check: true
-          create-pr-comment: false
-          update-comment-if-one-exists: false
+          create-pr-comment: true
           ignore-test-failures: true
           timezone: 'america/denver'
