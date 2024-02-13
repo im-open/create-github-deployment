@@ -1,6 +1,7 @@
 const { assert } = require('node:assert');
 const { describe, test, expect, beforeEach } = require('@jest/globals');
 const { setup, INVALID_STATUS } = require('./library.js');
+const { ALLOWED_STATUSES } = require('./deployments.js');
 
 const inputKey = key => `INPUT_${key.replace(/ /g, '-').toUpperCase()}`;
 
@@ -19,7 +20,7 @@ describe('deployment status', () => {
   test('invalid deployment status throws exception', () => {
     try {
       const invalidStatus = 'invalid-status';
-      process.env['INPUT_DEPLOYMENT-STATUS'] = invalidStatus;
+      process.env[inputKey('deployment-status')] = invalidStatus;
       const testConext = setup();
       expect(testConext).toBeUndefined();
     } catch (error) {
@@ -27,11 +28,11 @@ describe('deployment status', () => {
     }
   });
 
-  test('valid deployment status does not throw exception', () => {
-    process.env['INPUT_DEPLOYMENT-STATUS'] = 'SUCCESS';
+  test.each(ALLOWED_STATUSES)(`valid deployment status of %s does not throw exception`, status => {
+    process.env[inputKey('deployment-status')] = status;
     try {
       const testConext = setup();
-      expect(testConext.deployment_status).toBe('SUCCESS');
+      expect(testConext.deployment_status).toBe(status);
     } catch (error) {
       expect(error).toBeUndefined();
     }
