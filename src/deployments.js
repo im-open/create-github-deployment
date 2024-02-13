@@ -1,6 +1,15 @@
 const { Octokit } = require('@octokit/rest');
 const { graphql } = require('@octokit/graphql');
 const WORKFLOW_DEPLOY = 'workflowdeploy';
+const ALLOWED_STATUSES = [
+  'success',
+  'error',
+  'failure',
+  'inactive',
+  'in_progress',
+  'queued',
+  'pending'
+];
 
 async function inactivatePriorDeployments(context, currentDeploymentNodeId) {
   const octokit = new Octokit({ auth: context.token });
@@ -131,5 +140,6 @@ async function createDeploymentStatus(
   const status = await octokit.rest.repos.createDeploymentStatus(statusParams);
 }
 module.exports = {
+  ALLOWED_STATUSES,
   createDeployment
 };

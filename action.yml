@@ -15,7 +15,7 @@ inputs:
     description: The branch, tag or SHA that was deployed
     required: true
   deployment-status:
-    description: The status of the deployment [error|failure|success]
+    description: The status of the deployment, accepted values are [success|error|failure|inactive|in_progress|queued|pending]
     required: true
   deployment-description:
     description: Any description or message about the deployment
