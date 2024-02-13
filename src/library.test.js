@@ -1,20 +1,19 @@
 const { assert } = require('node:assert');
 const { describe, test, expect, beforeEach } = require('@jest/globals');
-
 const { setup, INVALID_STATUS } = require('./library.js');
 
-function prepTests() {
-  process.env['INPUT_WORKFLOW-ACTOR'] = 'test-actor';
-  process.env['INPUT_TOKEN'] = 'test-token';
-  process.env['INPUT_ENVIRONMENT'] = 'test-environment';
-  process.env['INPUT_RELEASE-REF'] = 'test-release-ref';
-  process.env['INPUT_DEPLOYMENT-STATUS'] = 'test-deployment-status';
-  process.env['INPUT_DEPLOYMENT-DESCRIPTION'] = 'test-deployment-description';
-  process.env['INPUT_ENTITY'] = 'test-entity';
-  process.env['INPUT_INSTANCE'] = 'test-instance';
-}
+const inputKey = key => `INPUT_${key.replace(/ /g, '-').toUpperCase()}`;
 
-beforeEach(() => prepTests());
+beforeEach(() => {
+  process.env[inputKey('workflow-actor')] = 'test-actor';
+  process.env[inputKey('token')] = 'test-token';
+  process.env[inputKey('environment')] = 'test-environment';
+  process.env[inputKey('release-ref')] = 'test-release-ref';
+  process.env[inputKey('deployment-status')] = 'test-deployment-status';
+  process.env[inputKey('deployment-description')] = 'test-deployment-description';
+  process.env[inputKey('entity')] = 'test-entity';
+  process.env[inputKey('instance')] = 'test-instance';
+});
 
 describe('deployment status', () => {
   test('invalid deployment status throws exception', () => {
