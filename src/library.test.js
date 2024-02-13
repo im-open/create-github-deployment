@@ -22,6 +22,7 @@ describe('deployment status', () => {
       const invalidStatus = 'invalid-status';
       process.env['INPUT_DEPLOYMENT-STATUS'] = invalidStatus;
       const testConext = setup();
+      expect(testConext).toBeUndefined();
     } catch (error) {
       expect(error.name).toBe(INVALID_STATUS);
     }
@@ -33,7 +34,7 @@ describe('deployment status', () => {
       const testConext = setup();
       expect(testConext.deployment_status).toBe('SUCCESS');
     } catch (error) {
-      expect(error).toBe(undefined);
+      expect(error).toBeUndefined();
     }
   });
 });
