@@ -39647,7 +39647,7 @@ try {
   const runPromise = new Promise((resolve, reject) => resolve(run(setupContext)));
   runPromise.then(deploymentId => core.setOutput('github-deployment-id', deploymentId));
 } catch (error) {
-  core.setFailed(`An error occurred creating a GitHub deployment: ${error}`);
+  core.setFailed(`An error occurred creating a GitHub deployment: ${error.message}`);
   return;
 }
 /*! Bundled license information:
