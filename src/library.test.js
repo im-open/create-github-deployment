@@ -6,6 +6,10 @@ const { ALLOWED_STATUSES } = require('./deployments.js');
 const inputKey = key => `INPUT_${key.replace(/ /g, '-').toUpperCase()}`;
 
 beforeEach(() => {
+  // This is needed for the context.repo call in  library.setup()
+  process.env['GITHUB_REPOSITORY'] = 'im-open/create-github-deployment';
+
+  // These are needed for the action inputs
   process.env[inputKey('workflow-actor')] = 'test-actor';
   process.env[inputKey('token')] = 'test-token';
   process.env[inputKey('environment')] = 'test-environment';
