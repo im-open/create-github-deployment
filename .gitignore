@@ -3,3 +3,4 @@ node_modules/
 
 # Jest
 jest.json
+jest-results.json

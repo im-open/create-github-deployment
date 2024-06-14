@@ -13,6 +13,6 @@ try {
 } catch (error) {
   //Anything that shows up here should be a re-thrown error where the detailed error was already logged.
   //We can set a generic failure message because the more detailed one should already have been logged.
-  core.setFailed(`An error occurred creating a GitHub deployment: ${error}`);
+  core.setFailed(`An error occurred creating a GitHub deployment: ${error.message}`);
   return;
 }
