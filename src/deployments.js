@@ -54,7 +54,21 @@ async function inactivatePriorDeployments(context, currentDeploymentNodeId) {
         }
       }`;
 
-  const statuses = await octokitGraphQl(statusesQuery, { deploymentNodeIds: deploymentNodeIds });
+  const page = 100;
+  const pages = Math.ceil(params.deploymentNodeIds.length / page);
+  const statusRequests = [];
+  const statuses = [];
+
+  for (var i = 0; i < pages; i++) {
+    const sliced = params.deploymentNodeIds.slice(i * page, (i + 1) * page);
+    statusRequests.push(await octokitGraphQl(statusesQuery, { deploymentNodeIds: sliced }));
+  }
+
+  await Promise.all(statusRequests).then(response => {
+    for (var i = 0; i < response.length; i++) {
+      statuses.push(...response[i]);
+    }
+  });
 
   for (let i = 0; i < statuses.deployments.length; i++) {
     let deploymentQl = statuses.deployments[i];

@@ -42155,9 +42155,21 @@ var require_deployments = __commonJS({
           }
         }
       }`;
-      const statuses = await octokitGraphQl(statusesQuery, { deploymentNodeIds });
-      for (let i = 0; i < statuses.deployments.length; i++) {
-        let deploymentQl = statuses.deployments[i];
+      const page = 100;
+      const pages = Math.ceil(params.deploymentNodeIds.length / page);
+      const statusRequests = [];
+      const statuses = [];
+      for (var i = 0; i < pages; i++) {
+        const sliced = params.deploymentNodeIds.slice(i * page, (i + 1) * page);
+        statusRequests.push(await octokitGraphQl(statusesQuery, { deploymentNodeIds: sliced }));
+      }
+      await Promise.all(statusRequests).then(response => {
+        for (var i2 = 0; i2 < response.length; i2++) {
+          statuses.push(...response[i2]);
+        }
+      });
+      for (let i2 = 0; i2 < statuses.deployments.length; i2++) {
+        let deploymentQl = statuses.deployments[i2];
         let deployment = deploymentsList.filter(d => d.node_id == deploymentQl.id)[0];
         for (let j = 0; j < deploymentQl.statuses.nodes.length; j++) {
           const status = deploymentQl.statuses.nodes[j];
