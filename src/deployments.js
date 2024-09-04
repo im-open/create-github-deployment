@@ -13,11 +13,6 @@ const ALLOWED_STATUSES = [
 
 async function inactivatePriorDeployments(context, currentDeploymentNodeId) {
   const octokit = new Octokit({ auth: context.token });
-  const octokitGraphQl = graphql.defaults({
-    headers: {
-      authorization: `token ${context.token}`
-    }
-  });
 
   const params = {
     owner: context.owner,
@@ -36,25 +31,7 @@ async function inactivatePriorDeployments(context, currentDeploymentNodeId) {
       d.payload.instance == context.instance
   );
 
-  const deploymentNodeIds = deploymentsList.map(d => d.node_id);
-  const statusesQuery = `
-      query($deploymentNodeIds: [ID!]!) {
-        deployments: nodes(ids: $deploymentNodeIds) {
-          ... on Deployment {
-            id
-            databaseId
-            statuses(first:1) {
-              nodes {
-                description
-                state
-                createdAt
-              }
-            }
-          }
-        }
-      }`;
-
-  const statuses = await octokitGraphQl(statusesQuery, { deploymentNodeIds: deploymentNodeIds });
+  const statuses = await getPriorDeploymentStatuses(deploymentsList.map(d => d.node_id));
 
   for (let i = 0; i < statuses.deployments.length; i++) {
     let deploymentQl = statuses.deployments[i];
@@ -76,6 +53,48 @@ async function inactivatePriorDeployments(context, currentDeploymentNodeId) {
       }
     }
   }
+}
+
+async function getPriorDeploymentStatuses(deploymentNodeIds) {
+  const octokitGraphQl = graphql.defaults({
+    headers: {
+      authorization: `token ${context.token}`
+    }
+  });
+
+  const statuses = [];
+  const statusesQuery = `
+          query($deploymentNodeIds: [ID!]!) {
+            deployments: nodes(ids: $deploymentNodeIds) {
+              ... on Deployment {
+                id
+                databaseId
+                statuses(first:1) {
+                  nodes {
+                    description
+                    state
+                    createdAt
+                  }
+                }
+              }
+            }
+          }`;
+
+  const page = 100;
+  const pages = Math.ceil(deploymentNodeIds.length / page);
+  const statusRequests = [];
+
+  for (var i = 0; i < pages; i++) {
+    const sliced = deploymentNodeIds.slice(i * page, (i + 1) * page);
+    statusRequests.push(await octokitGraphQl(statusesQuery, { deploymentNodeIds: sliced }));
+  }
+
+  await Promise.all(statusRequests).then(response => {
+    for (var i = 0; i < response.length; i++) {
+      statuses.push(...response[i]);
+    }
+  });
+  return statuses;
 }
 
 async function createDeployment(context) {
@@ -139,6 +158,7 @@ async function createDeploymentStatus(
   };
   const status = await octokit.rest.repos.createDeploymentStatus(statusParams);
 }
+
 module.exports = {
   ALLOWED_STATUSES,
   createDeployment
