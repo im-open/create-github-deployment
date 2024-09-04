@@ -42118,7 +42118,7 @@ var require_deployments = __commonJS({
     ];
     async function inactivatePriorDeployments(context2, currentDeploymentNodeId) {
       const octokit = new Octokit({ auth: context2.token });
-      const params2 = {
+      const params = {
         owner: context2.owner,
         repo: context2.repo,
         task: WORKFLOW_DEPLOY,
@@ -42126,7 +42126,7 @@ var require_deployments = __commonJS({
         per_page: 100
       };
       const deploymentsList = (
-        await octokit.paginate(octokit.rest.repos.listDeployments, params2)
+        await octokit.paginate(octokit.rest.repos.listDeployments, params)
       ).filter(
         d =>
           d.node_id != currentDeploymentNodeId &&
@@ -42177,10 +42177,10 @@ var require_deployments = __commonJS({
             }
           }`;
       const page = 100;
-      const pages = Math.ceil(params.deploymentNodeIds.length / page);
+      const pages = Math.ceil(deploymentNodeIds.length / page);
       const statusRequests = [];
       for (var i = 0; i < pages; i++) {
-        const sliced = params.deploymentNodeIds.slice(i * page, (i + 1) * page);
+        const sliced = deploymentNodeIds.slice(i * page, (i + 1) * page);
         statusRequests.push(await octokitGraphQl(statusesQuery, { deploymentNodeIds: sliced }));
       }
       await Promise.all(statusRequests).then(response => {

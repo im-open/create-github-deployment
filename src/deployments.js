@@ -81,11 +81,11 @@ async function getPriorDeploymentStatuses(deploymentNodeIds) {
           }`;
 
   const page = 100;
-  const pages = Math.ceil(params.deploymentNodeIds.length / page);
+  const pages = Math.ceil(deploymentNodeIds.length / page);
   const statusRequests = [];
 
   for (var i = 0; i < pages; i++) {
-    const sliced = params.deploymentNodeIds.slice(i * page, (i + 1) * page);
+    const sliced = deploymentNodeIds.slice(i * page, (i + 1) * page);
     statusRequests.push(await octokitGraphQl(statusesQuery, { deploymentNodeIds: sliced }));
   }
 
