@@ -94,7 +94,7 @@ async function getPriorDeploymentStatuses(token, deploymentNodeIds) {
 
   await Promise.all(statusRequests).then(response => {
     for (var i = 0; i < response.length; i++) {
-      statuses.push(...response[i]);
+      statuses.push(...response[i].deployments);
     }
   });
   return statuses;
