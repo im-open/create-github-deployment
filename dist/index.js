@@ -42188,7 +42188,7 @@ var require_deployments = __commonJS({
       }
       await Promise.all(statusRequests).then(response => {
         for (var i2 = 0; i2 < response.length; i2++) {
-          statuses.push(...response[i2]);
+          statuses.push(...response[i2].deployments);
         }
       });
       return statuses;
