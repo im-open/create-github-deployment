@@ -4652,20 +4652,20 @@ var require_webidl = __commonJS({
     webidl.errors.exception = function (message) {
       return new TypeError(`${message.header}: ${message.message}`);
     };
-    webidl.errors.conversionFailed = function (context2) {
-      const plural = context2.types.length === 1 ? '' : ' one of';
-      const message = `${
-        context2.argument
-      } could not be converted to${plural}: ${context2.types.join(', ')}.`;
+    webidl.errors.conversionFailed = function (context) {
+      const plural = context.types.length === 1 ? '' : ' one of';
+      const message = `${context.argument} could not be converted to${plural}: ${context.types.join(
+        ', '
+      )}.`;
       return webidl.errors.exception({
-        header: context2.prefix,
+        header: context.prefix,
         message
       });
     };
-    webidl.errors.invalidArgument = function (context2) {
+    webidl.errors.invalidArgument = function (context) {
       return webidl.errors.exception({
-        header: context2.prefix,
-        message: `"${context2.value}" is an invalid ${context2.type}.`
+        header: context.prefix,
+        message: `"${context.value}" is an invalid ${context.type}.`
       });
     };
     webidl.brandCheck = function (V, I, opts = void 0) {
@@ -10449,15 +10449,15 @@ var require_api_request = __commonJS({
         }
         addSignal(this, signal);
       }
-      onConnect(abort, context2) {
+      onConnect(abort, context) {
         if (!this.callback) {
           throw new RequestAbortedError();
         }
         this.abort = abort;
-        this.context = context2;
+        this.context = context;
       }
       onHeaders(statusCode, rawHeaders, resume, statusMessage) {
-        const { callback, opaque, abort, context: context2, responseHeaders, highWaterMark } = this;
+        const { callback, opaque, abort, context, responseHeaders, highWaterMark } = this;
         const headers =
           responseHeaders === 'raw'
             ? util.parseRawHeaders(rawHeaders)
@@ -10490,7 +10490,7 @@ var require_api_request = __commonJS({
               trailers: this.trailers,
               opaque,
               body,
-              context: context2
+              context
             });
           }
         }
@@ -10610,15 +10610,15 @@ var require_api_stream = __commonJS({
         }
         addSignal(this, signal);
       }
-      onConnect(abort, context2) {
+      onConnect(abort, context) {
         if (!this.callback) {
           throw new RequestAbortedError();
         }
         this.abort = abort;
-        this.context = context2;
+        this.context = context;
       }
       onHeaders(statusCode, rawHeaders, resume, statusMessage) {
-        const { factory, opaque, context: context2, callback, responseHeaders } = this;
+        const { factory, opaque, context, callback, responseHeaders } = this;
         const headers =
           responseHeaders === 'raw'
             ? util.parseRawHeaders(rawHeaders)
@@ -10652,7 +10652,7 @@ var require_api_stream = __commonJS({
             statusCode,
             headers,
             opaque,
-            context: context2
+            context
           });
           if (
             !res ||
@@ -10851,17 +10851,17 @@ var require_api_pipeline = __commonJS({
         this.res = null;
         addSignal(this, signal);
       }
-      onConnect(abort, context2) {
+      onConnect(abort, context) {
         const { ret, res } = this;
         assert(!res, 'pipeline cannot be retried');
         if (ret.destroyed) {
           throw new RequestAbortedError();
         }
         this.abort = abort;
-        this.context = context2;
+        this.context = context;
       }
       onHeaders(statusCode, rawHeaders, resume) {
-        const { opaque, handler, context: context2 } = this;
+        const { opaque, handler, context } = this;
         if (statusCode < 200) {
           if (this.onInfo) {
             const headers =
@@ -10885,7 +10885,7 @@ var require_api_pipeline = __commonJS({
             headers,
             opaque,
             body: this.res,
-            context: context2
+            context
           });
         } catch (err) {
           this.res.on('error', util.nop);
@@ -10980,7 +10980,7 @@ var require_api_upgrade = __commonJS({
         this.context = null;
         addSignal(this, signal);
       }
-      onConnect(abort, context2) {
+      onConnect(abort, context) {
         if (!this.callback) {
           throw new RequestAbortedError();
         }
@@ -10991,7 +10991,7 @@ var require_api_upgrade = __commonJS({
         throw new SocketError('bad upgrade', null);
       }
       onUpgrade(statusCode, rawHeaders, socket) {
-        const { callback, opaque, context: context2 } = this;
+        const { callback, opaque, context } = this;
         assert.strictEqual(statusCode, 101);
         removeSignal(this);
         this.callback = null;
@@ -11003,7 +11003,7 @@ var require_api_upgrade = __commonJS({
           headers,
           socket,
           opaque,
-          context: context2
+          context
         });
       }
       onError(err) {
@@ -11081,18 +11081,18 @@ var require_api_connect = __commonJS({
         this.abort = null;
         addSignal(this, signal);
       }
-      onConnect(abort, context2) {
+      onConnect(abort, context) {
         if (!this.callback) {
           throw new RequestAbortedError();
         }
         this.abort = abort;
-        this.context = context2;
+        this.context = context;
       }
       onHeaders() {
         throw new SocketError('bad connect', null);
       }
       onUpgrade(statusCode, rawHeaders, socket) {
-        const { callback, opaque, context: context2 } = this;
+        const { callback, opaque, context } = this;
         removeSignal(this);
         this.callback = null;
         let headers = rawHeaders;
@@ -11107,7 +11107,7 @@ var require_api_connect = __commonJS({
           headers,
           socket,
           opaque,
-          context: context2
+          context
         });
       }
       onError(err) {
@@ -23175,20 +23175,20 @@ var require_webidl2 = __commonJS({
     webidl.errors.exception = function (message) {
       return new TypeError(`${message.header}: ${message.message}`);
     };
-    webidl.errors.conversionFailed = function (context2) {
-      const plural = context2.types.length === 1 ? '' : ' one of';
-      const message = `${
-        context2.argument
-      } could not be converted to${plural}: ${context2.types.join(', ')}.`;
+    webidl.errors.conversionFailed = function (context) {
+      const plural = context.types.length === 1 ? '' : ' one of';
+      const message = `${context.argument} could not be converted to${plural}: ${context.types.join(
+        ', '
+      )}.`;
       return webidl.errors.exception({
-        header: context2.prefix,
+        header: context.prefix,
         message
       });
     };
-    webidl.errors.invalidArgument = function (context2) {
+    webidl.errors.invalidArgument = function (context) {
       return webidl.errors.exception({
-        header: context2.prefix,
-        message: `"${context2.value}" is an invalid ${context2.type}.`
+        header: context.prefix,
+        message: `"${context.value}" is an invalid ${context.type}.`
       });
     };
     webidl.brandCheck = function (V, I, opts) {
@@ -29494,17 +29494,17 @@ var require_api_request2 = __commonJS({
           }
         }
       }
-      onConnect(abort, context2) {
+      onConnect(abort, context) {
         if (this.reason) {
           abort(this.reason);
           return;
         }
         assert(this.callback);
         this.abort = abort;
-        this.context = context2;
+        this.context = context;
       }
       onHeaders(statusCode, rawHeaders, resume, statusMessage) {
-        const { callback, opaque, abort, context: context2, responseHeaders, highWaterMark } = this;
+        const { callback, opaque, abort, context, responseHeaders, highWaterMark } = this;
         const headers =
           responseHeaders === 'raw'
             ? util.parseRawHeaders(rawHeaders)
@@ -29547,7 +29547,7 @@ var require_api_request2 = __commonJS({
               trailers: this.trailers,
               opaque,
               body: res,
-              context: context2
+              context
             });
           }
         }
@@ -29720,17 +29720,17 @@ var require_api_stream2 = __commonJS({
         }
         addSignal(this, signal);
       }
-      onConnect(abort, context2) {
+      onConnect(abort, context) {
         if (this.reason) {
           abort(this.reason);
           return;
         }
         assert(this.callback);
         this.abort = abort;
-        this.context = context2;
+        this.context = context;
       }
       onHeaders(statusCode, rawHeaders, resume, statusMessage) {
-        const { factory, opaque, context: context2, callback, responseHeaders } = this;
+        const { factory, opaque, context, callback, responseHeaders } = this;
         const headers =
           responseHeaders === 'raw'
             ? util.parseRawHeaders(rawHeaders)
@@ -29764,7 +29764,7 @@ var require_api_stream2 = __commonJS({
             statusCode,
             headers,
             opaque,
-            context: context2
+            context
           });
           if (
             !res ||
@@ -29958,7 +29958,7 @@ var require_api_pipeline2 = __commonJS({
         this.res = null;
         addSignal(this, signal);
       }
-      onConnect(abort, context2) {
+      onConnect(abort, context) {
         const { ret, res } = this;
         if (this.reason) {
           abort(this.reason);
@@ -29967,10 +29967,10 @@ var require_api_pipeline2 = __commonJS({
         assert(!res, 'pipeline cannot be retried');
         assert(!ret.destroyed);
         this.abort = abort;
-        this.context = context2;
+        this.context = context;
       }
       onHeaders(statusCode, rawHeaders, resume) {
-        const { opaque, handler, context: context2 } = this;
+        const { opaque, handler, context } = this;
         if (statusCode < 200) {
           if (this.onInfo) {
             const headers =
@@ -29994,7 +29994,7 @@ var require_api_pipeline2 = __commonJS({
             headers,
             opaque,
             body: this.res,
-            context: context2
+            context
           });
         } catch (err) {
           this.res.on('error', util.nop);
@@ -30086,7 +30086,7 @@ var require_api_upgrade2 = __commonJS({
         this.context = null;
         addSignal(this, signal);
       }
-      onConnect(abort, context2) {
+      onConnect(abort, context) {
         if (this.reason) {
           abort(this.reason);
           return;
@@ -30099,7 +30099,7 @@ var require_api_upgrade2 = __commonJS({
         throw new SocketError('bad upgrade', null);
       }
       onUpgrade(statusCode, rawHeaders, socket) {
-        const { callback, opaque, context: context2 } = this;
+        const { callback, opaque, context } = this;
         assert.strictEqual(statusCode, 101);
         removeSignal(this);
         this.callback = null;
@@ -30111,7 +30111,7 @@ var require_api_upgrade2 = __commonJS({
           headers,
           socket,
           opaque,
-          context: context2
+          context
         });
       }
       onError(err) {
@@ -30187,20 +30187,20 @@ var require_api_connect2 = __commonJS({
         this.abort = null;
         addSignal(this, signal);
       }
-      onConnect(abort, context2) {
+      onConnect(abort, context) {
         if (this.reason) {
           abort(this.reason);
           return;
         }
         assert(this.callback);
         this.abort = abort;
-        this.context = context2;
+        this.context = context;
       }
       onHeaders() {
         throw new SocketError('bad connect', null);
       }
       onUpgrade(statusCode, rawHeaders, socket) {
-        const { callback, opaque, context: context2 } = this;
+        const { callback, opaque, context } = this;
         removeSignal(this);
         this.callback = null;
         let headers = rawHeaders;
@@ -30215,7 +30215,7 @@ var require_api_connect2 = __commonJS({
           headers,
           socket,
           opaque,
-          context: context2
+          context
         });
       }
       onError(err) {
@@ -38843,8 +38843,8 @@ var require_dist_node2 = __commonJS({
     function isKeyOperator(operator) {
       return operator === ';' || operator === '&' || operator === '?';
     }
-    function getValues(context2, operator, key, modifier) {
-      var value = context2[key],
+    function getValues(context, operator, key, modifier) {
+      var value = context[key],
         result = [];
       if (isDefined(value) && value !== '') {
         if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
@@ -38905,7 +38905,7 @@ var require_dist_node2 = __commonJS({
         expand: expand.bind(null, template)
       };
     }
-    function expand(template, context2) {
+    function expand(template, context) {
       var operators = ['+', '#', '.', '/', ';', '?', '&'];
       template = template.replace(/\{([^\{\}]+)\}|([^\{\}]+)/g, function (_, expression, literal) {
         if (expression) {
@@ -38917,7 +38917,7 @@ var require_dist_node2 = __commonJS({
           }
           expression.split(/,/g).forEach(function (variable) {
             var tmp = /([^:\*]*)(?::(\d+)|(\*))?/.exec(variable);
-            values.push(getValues(context2, operator, tmp[1], tmp[2] || tmp[3]));
+            values.push(getValues(context, operator, tmp[1], tmp[2] || tmp[3]));
           });
           if (operator && operator !== '+') {
             var separator = ',';
@@ -42116,13 +42116,13 @@ var require_deployments = __commonJS({
       'queued',
       'pending'
     ];
-    async function inactivatePriorDeployments(context2, currentDeploymentNodeId) {
-      const octokit = new Octokit({ auth: context2.token });
+    async function inactivatePriorDeployments(context, currentDeploymentNodeId) {
+      const octokit = new Octokit({ auth: context.token });
       const params = {
-        owner: context2.owner,
-        repo: context2.repo,
+        owner: context.owner,
+        repo: context.repo,
         task: WORKFLOW_DEPLOY,
-        environment: context2.environment,
+        environment: context.environment,
         per_page: 100
       };
       const deploymentsList = (
@@ -42130,22 +42130,25 @@ var require_deployments = __commonJS({
       ).filter(
         d =>
           d.node_id != currentDeploymentNodeId &&
-          d.payload.entity == context2.entity &&
-          d.payload.instance == context2.instance
+          d.payload.entity == context.entity &&
+          d.payload.instance == context.instance
       );
-      const statuses = await getPriorDeploymentStatuses(deploymentsList.map(d => d.node_id));
+      const statuses = await getPriorDeploymentStatuses(
+        context.token,
+        deploymentsList.map(d => d.node_id)
+      );
       for (let i = 0; i < statuses.deployments.length; i++) {
         let deploymentQl = statuses.deployments[i];
         let deployment = deploymentsList.filter(d => d.node_id == deploymentQl.id)[0];
         for (let j = 0; j < deploymentQl.statuses.nodes.length; j++) {
           const status = deploymentQl.statuses.nodes[j];
-          if (deployment.payload.instance == context2.instance && status.state == 'SUCCESS') {
+          if (deployment.payload.instance == context.instance && status.state == 'SUCCESS') {
             await createDeploymentStatus(
               octokit,
-              context2.owner,
-              context2.repo,
+              context.owner,
+              context.repo,
               deployment.id,
-              context2.environment,
+              context.environment,
               'inactive',
               'Inactivated by workflow'
             );
@@ -42153,10 +42156,10 @@ var require_deployments = __commonJS({
         }
       }
     }
-    async function getPriorDeploymentStatuses(deploymentNodeIds) {
+    async function getPriorDeploymentStatuses(token, deploymentNodeIds) {
       const octokitGraphQl = graphql.defaults({
         headers: {
-          authorization: `token ${context.token}`
+          authorization: `token ${token}`
         }
       });
       const statuses = [];
@@ -42190,38 +42193,38 @@ var require_deployments = __commonJS({
       });
       return statuses;
     }
-    async function createDeployment2(context2) {
-      const octokit = new Octokit({ auth: context2.token });
+    async function createDeployment2(context) {
+      const octokit = new Octokit({ auth: context.token });
       const deployment = (
         await octokit.rest.repos.createDeployment({
-          owner: context2.owner,
-          repo: context2.repo,
-          ref: context2.release_ref,
-          environment: context2.environment,
+          owner: context.owner,
+          repo: context.repo,
+          ref: context.release_ref,
+          environment: context.environment,
           task: WORKFLOW_DEPLOY,
           auto_merge: false,
           required_contexts: [],
           transient_environment: true,
           payload: {
-            entity: context2.entity,
-            instance: context2.instance,
-            workflow_run_url: `${context2.server_url}/${context2.owner}/${context2.repo}/actions/runs/${context2.workflow_run_id}`,
-            workflow_actor: context2.workflow_actor
+            entity: context.entity,
+            instance: context.instance,
+            workflow_run_url: `${context.server_url}/${context.owner}/${context.repo}/actions/runs/${context.workflow_run_id}`,
+            workflow_actor: context.workflow_actor
           }
         })
       ).data;
       const inactivate = new Promise((resolve, reject) =>
-        resolve(inactivatePriorDeployments(context2, deployment.node_id))
+        resolve(inactivatePriorDeployments(context, deployment.node_id))
       );
       inactivate.then(async () => {
         await createDeploymentStatus(
           octokit,
-          context2.owner,
-          context2.repo,
+          context.owner,
+          context.repo,
           deployment.id,
-          context2.environment,
-          context2.deployment_status,
-          context2.deployment_description
+          context.environment,
+          context.deployment_status,
+          context.deployment_description
         );
       });
       return deployment.id;
@@ -42269,7 +42272,7 @@ var require_library = __commonJS({
       required: false,
       trimWhitespace: true
     };
-    var context2 = class {
+    var context = class {
       constructor(
         workflow_actor,
         token,
@@ -42317,7 +42320,7 @@ var require_library = __commonJS({
       if (!ALLOWED_STATUSES.map(s => s.toLowerCase()).includes(deployment_status.toLowerCase())) {
         throw { name: INVALID_STATUS, message: `Invalid deployment status: ${deployment_status}` };
       }
-      return new context2(
+      return new context(
         workflow_actor,
         token,
         environment,
@@ -42343,8 +42346,8 @@ var require_library = __commonJS({
 var core = require_core();
 var { setup } = require_library();
 var { createDeployment } = require_deployments();
-async function run(context2) {
-  return await createDeployment(context2);
+async function run(context) {
+  return await createDeployment(context);
 }
 try {
   const setupContext = setup();

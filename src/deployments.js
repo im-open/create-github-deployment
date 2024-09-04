@@ -31,7 +31,10 @@ async function inactivatePriorDeployments(context, currentDeploymentNodeId) {
       d.payload.instance == context.instance
   );
 
-  const statuses = await getPriorDeploymentStatuses(deploymentsList.map(d => d.node_id));
+  const statuses = await getPriorDeploymentStatuses(
+    context.token,
+    deploymentsList.map(d => d.node_id)
+  );
 
   for (let i = 0; i < statuses.deployments.length; i++) {
     let deploymentQl = statuses.deployments[i];
@@ -55,10 +58,10 @@ async function inactivatePriorDeployments(context, currentDeploymentNodeId) {
   }
 }
 
-async function getPriorDeploymentStatuses(deploymentNodeIds) {
+async function getPriorDeploymentStatuses(token, deploymentNodeIds) {
   const octokitGraphQl = graphql.defaults({
     headers: {
-      authorization: `token ${context.token}`
+      authorization: `token ${token}`
     }
   });
 
