@@ -1,18 +1,23 @@
 const { Octokit } = require('@octokit/rest');
 const { graphql } = require('@octokit/graphql');
 const WORKFLOW_DEPLOY = 'workflowdeploy';
-const ALLOWED_STATUSES = [
-  'success',
-  'error',
-  'failure',
-  'inactive',
-  'in_progress',
-  'queued',
-  'pending'
-];
+const ALLOWED_STATUSES = {
+  SUCCESS: 'success',
+  ERROR: 'error',
+  FAILURE: 'failure',
+  INACTIVE: 'inactive',
+  IN_PROGRESS: 'in_progress',
+  QUEUED: 'queued',
+  PENDING: 'pending'
+};
+
+const createOctokitClient = token => new Octokit({ auth: token });
+const createOctokitGraphQLClient = token =>
+  graphql.defaults({ headers: { authorization: `token ${token}` } });
 
 async function inactivatePriorDeployments(context, currentDeploymentNodeId) {
-  const octokit = new Octokit({ auth: context.token });
+  const octokit = createOctokitClient(context.token);
+  const octokitGraphQl = createOctokitGraphQLClient(context.token);
 
   const params = {
     owner: context.owner,
@@ -23,21 +28,16 @@ async function inactivatePriorDeployments(context, currentDeploymentNodeId) {
   };
 
   const deploymentsList = (
-    await octokit.paginate(octokit.rest.repos.listDeployments, params)
-  ).filter(
-    d =>
-      d.node_id != currentDeploymentNodeId &&
-      d.payload.entity == context.entity &&
-      d.payload.instance == context.instance
-  );
+    await getPriorDeployments(octokit, context.entity, context.instance, params)
+  ).filter(d => d.node_id != currentDeploymentNodeId);
 
   const statuses = await getPriorDeploymentStatuses(
-    context.token,
+    octokitGraphQl,
     deploymentsList.map(d => d.node_id)
   );
 
-  for (let i = 0; i < statuses.deployments.length; i++) {
-    let deploymentQl = statuses.deployments[i];
+  for (let i = 0; i < statuses.length; i++) {
+    let deploymentQl = statuses[i];
     let deployment = deploymentsList.filter(d => d.node_id == deploymentQl.id)[0];
 
     for (let j = 0; j < deploymentQl.statuses.nodes.length; j++) {
@@ -58,13 +58,13 @@ async function inactivatePriorDeployments(context, currentDeploymentNodeId) {
   }
 }
 
-async function getPriorDeploymentStatuses(token, deploymentNodeIds) {
-  const octokitGraphQl = graphql.defaults({
-    headers: {
-      authorization: `token ${token}`
-    }
-  });
+async function getPriorDeployments(octokit, entity, instance, params) {
+  return (await octokit.paginate(octokit.rest.repos.listDeployments, params)).filter(
+    d => d.payload.entity == entity && d.payload.instance == instance
+  );
+}
 
+async function getPriorDeploymentStatuses(octokitGraphQl, deploymentNodeIds) {
   const statuses = [];
   const statusesQuery = `
           query($deploymentNodeIds: [ID!]!) {
@@ -101,7 +101,8 @@ async function getPriorDeploymentStatuses(token, deploymentNodeIds) {
 }
 
 async function createDeployment(context) {
-  const octokit = new Octokit({ auth: context.token });
+  const octokit = createOctokitClient(context.token);
+
   // create deployment record
   const deployment = (
     await octokit.rest.repos.createDeployment({
@@ -126,6 +127,7 @@ async function createDeployment(context) {
   const inactivate = new Promise((resolve, reject) =>
     resolve(inactivatePriorDeployments(context, deployment.node_id))
   );
+
   inactivate.then(async () => {
     await createDeploymentStatus(
       octokit,
@@ -164,5 +166,10 @@ async function createDeploymentStatus(
 
 module.exports = {
   ALLOWED_STATUSES,
-  createDeployment
+  WORKFLOW_DEPLOY,
+  createDeployment,
+  createOctokitClient,
+  createOctokitGraphQLClient,
+  getPriorDeployments,
+  getPriorDeploymentStatuses
 };

@@ -57,7 +57,7 @@ function setup() {
   const owner = github.context.repo.owner;
   const repo = github.context.repo.repo;
 
-  if (!ALLOWED_STATUSES.map(s => s.toLowerCase()).includes(deployment_status.toLowerCase())) {
+  if (!Object.values(ALLOWED_STATUSES).includes(deployment_status.toLowerCase())) {
     throw { name: INVALID_STATUS, message: `Invalid deployment status: ${deployment_status}` };
   }
 
@@ -79,5 +79,6 @@ function setup() {
 
 module.exports = {
   INVALID_STATUS,
-  setup
+  setup,
+  context
 };

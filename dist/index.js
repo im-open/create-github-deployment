@@ -42107,17 +42107,21 @@ var require_deployments = __commonJS({
     var { Octokit } = require_dist_node12();
     var { graphql } = require_dist_node6();
     var WORKFLOW_DEPLOY = 'workflowdeploy';
-    var ALLOWED_STATUSES = [
-      'success',
-      'error',
-      'failure',
-      'inactive',
-      'in_progress',
-      'queued',
-      'pending'
-    ];
+    var ALLOWED_STATUSES = {
+      SUCCESS: 'success',
+      ERROR: 'error',
+      FAILURE: 'failure',
+      INACTIVE: 'inactive',
+      IN_PROGRESS: 'in_progress',
+      QUEUED: 'queued',
+      PENDING: 'pending'
+    };
+    var createOctokitClient = token => new Octokit({ auth: token });
+    var createOctokitGraphQLClient = token =>
+      graphql.defaults({ headers: { authorization: `token ${token}` } });
     async function inactivatePriorDeployments(context, currentDeploymentNodeId) {
-      const octokit = new Octokit({ auth: context.token });
+      const octokit = createOctokitClient(context.token);
+      const octokitGraphQl = createOctokitGraphQLClient(context.token);
       const params = {
         owner: context.owner,
         repo: context.repo,
@@ -42126,19 +42130,14 @@ var require_deployments = __commonJS({
         per_page: 100
       };
       const deploymentsList = (
-        await octokit.paginate(octokit.rest.repos.listDeployments, params)
-      ).filter(
-        d =>
-          d.node_id != currentDeploymentNodeId &&
-          d.payload.entity == context.entity &&
-          d.payload.instance == context.instance
-      );
+        await getPriorDeployments(octokit, context.entity, context.instance, params)
+      ).filter(d => d.node_id != currentDeploymentNodeId);
       const statuses = await getPriorDeploymentStatuses(
-        context.token,
+        octokitGraphQl,
         deploymentsList.map(d => d.node_id)
       );
-      for (let i = 0; i < statuses.deployments.length; i++) {
-        let deploymentQl = statuses.deployments[i];
+      for (let i = 0; i < statuses.length; i++) {
+        let deploymentQl = statuses[i];
         let deployment = deploymentsList.filter(d => d.node_id == deploymentQl.id)[0];
         for (let j = 0; j < deploymentQl.statuses.nodes.length; j++) {
           const status = deploymentQl.statuses.nodes[j];
@@ -42156,12 +42155,12 @@ var require_deployments = __commonJS({
         }
       }
     }
-    async function getPriorDeploymentStatuses(token, deploymentNodeIds) {
-      const octokitGraphQl = graphql.defaults({
-        headers: {
-          authorization: `token ${token}`
-        }
-      });
+    async function getPriorDeployments(octokit, entity, instance, params) {
+      return (await octokit.paginate(octokit.rest.repos.listDeployments, params)).filter(
+        d => d.payload.entity == entity && d.payload.instance == instance
+      );
+    }
+    async function getPriorDeploymentStatuses(octokitGraphQl, deploymentNodeIds) {
       const statuses = [];
       const statusesQuery = `
           query($deploymentNodeIds: [ID!]!) {
@@ -42194,7 +42193,7 @@ var require_deployments = __commonJS({
       return statuses;
     }
     async function createDeployment2(context) {
-      const octokit = new Octokit({ auth: context.token });
+      const octokit = createOctokitClient(context.token);
       const deployment = (
         await octokit.rest.repos.createDeployment({
           owner: context.owner,
@@ -42252,7 +42251,12 @@ var require_deployments = __commonJS({
     }
     module2.exports = {
       ALLOWED_STATUSES,
-      createDeployment: createDeployment2
+      WORKFLOW_DEPLOY,
+      createDeployment: createDeployment2,
+      createOctokitClient,
+      createOctokitGraphQLClient,
+      getPriorDeployments,
+      getPriorDeploymentStatuses
     };
   }
 });
@@ -42317,7 +42321,7 @@ var require_library = __commonJS({
       const workflow_run_id = github.context.runId;
       const owner = github.context.repo.owner;
       const repo = github.context.repo.repo;
-      if (!ALLOWED_STATUSES.map(s => s.toLowerCase()).includes(deployment_status.toLowerCase())) {
+      if (!Object.values(ALLOWED_STATUSES).includes(deployment_status.toLowerCase())) {
         throw { name: INVALID_STATUS, message: `Invalid deployment status: ${deployment_status}` };
       }
       return new context(
@@ -42337,7 +42341,8 @@ var require_library = __commonJS({
     }
     module2.exports = {
       INVALID_STATUS,
-      setup: setup2
+      setup: setup2,
+      context
     };
   }
 });
