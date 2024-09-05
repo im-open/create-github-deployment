@@ -36,8 +36,8 @@ describe('deployment status', () => {
     status => {
       process.env[inputKey('deployment-status')] = status;
       try {
-        const testConext = setup();
-        expect(testConext.deployment_status).toBe(status);
+        const testContext = setup();
+        expect(testContext.deployment_status).toBe(status);
       } catch (error) {
         expect(error).toBeUndefined();
       }
