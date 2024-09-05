@@ -22,6 +22,7 @@ jobs:
         continue-on-error: true
         run: |
           npm install
+          export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
           ./node_modules/.bin/jest --json --outputFile=${{env.jest-output-file}} ./src/
 
       - name: Process jest results
