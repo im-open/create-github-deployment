@@ -24,8 +24,8 @@ describe('deployment status', () => {
     try {
       const invalidStatus = 'invalid-status';
       process.env[inputKey('deployment-status')] = invalidStatus;
-      const testConext = setup();
-      expect(testConext).toBeUndefined();
+      const testContext = setup();
+      expect(testContext).toBeUndefined();
     } catch (error) {
       expect(error.name).toBe(INVALID_STATUS);
     }
