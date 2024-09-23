@@ -76,7 +76,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}                         # If a different token is used, update github-login with the corresponding account
           environment: 'QA'
           release-ref: ${{ github.event.inputs.branchTagOrSha }}
-          deploy-status: ${{ steps.deploy-to-qa.outcome }}           # outcome is the result of the step before continue-on-error is applied, i.e. [error|failure|success]
+          deployment-status: ${{ steps.deploy-to-qa.outcome }}       # outcome is the result of the step before continue-on-error is applied, i.e. [error|failure|success]
           deployment-description: ${{ steps.deploy-to-qa.outcome }}  # information that may add supporting information to the status/result
           entity: deployments-experiment
           instance: ${{ inputs.instance }}
