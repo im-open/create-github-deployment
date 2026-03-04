@@ -39184,7 +39184,10 @@ var require_dist_node4 = __commonJS({
         const requestCopy = Object.assign({}, options.request);
         if (options.request.headers.authorization) {
           requestCopy.headers = Object.assign({}, options.request.headers, {
-            authorization: options.request.headers.authorization.replace(/ .*$/, ' [REDACTED]')
+            authorization: options.request.headers.authorization.replace(
+              /(?<! ) .*$/,
+              ' [REDACTED]'
+            )
           });
         }
         requestCopy.url = requestCopy.url
