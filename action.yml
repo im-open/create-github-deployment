@@ -32,5 +32,5 @@ outputs:
     description: The id of the GitHub deployment object
 
 runs:
-  using: node20
+  using: node24
   main: dist/index.js
