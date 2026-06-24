@@ -1,5 +1,5 @@
-const { Octokit } = require('@octokit/rest');
-const { graphql } = require('@octokit/graphql');
+import { Octokit } from '@octokit/rest';
+import { graphql } from '@octokit/graphql';
 const WORKFLOW_DEPLOY = 'workflowdeploy';
 const ALLOWED_STATUSES = {
   SUCCESS: 'success',
@@ -164,7 +164,7 @@ async function createDeploymentStatus(
   const status = await octokit.rest.repos.createDeploymentStatus(statusParams);
 }
 
-module.exports = {
+export {
   ALLOWED_STATUSES,
   WORKFLOW_DEPLOY,
   createDeployment,

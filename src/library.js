@@ -1,6 +1,6 @@
-const core = require('@actions/core');
-const github = require('@actions/github');
-const { ALLOWED_STATUSES } = require('./deployments');
+import { getInput } from '@actions/core';
+import { context as _context } from '@actions/github';
+import { ALLOWED_STATUSES } from './deployments';
 const INVALID_STATUS = 'InvalidStatus';
 
 const requiredArgOptions = {
@@ -44,18 +44,18 @@ class context {
 }
 
 function setup() {
-  const workflow_actor = core.getInput('workflow-actor', requiredArgOptions);
-  const token = core.getInput('token', requiredArgOptions);
-  const environment = core.getInput('environment', requiredArgOptions);
-  const release_ref = core.getInput('release-ref', requiredArgOptions);
-  const deployment_status = core.getInput('deployment-status', requiredArgOptions);
-  const deployment_description = core.getInput('deployment-description', notRequiredArgOptions);
-  const entity = core.getInput('entity', requiredArgOptions);
-  const instance = core.getInput('instance', requiredArgOptions);
-  const server_url = github.context.serverUrl;
-  const workflow_run_id = github.context.runId;
-  const owner = github.context.repo.owner;
-  const repo = github.context.repo.repo;
+  const workflow_actor = getInput('workflow-actor', requiredArgOptions);
+  const token = getInput('token', requiredArgOptions);
+  const environment = getInput('environment', requiredArgOptions);
+  const release_ref = getInput('release-ref', requiredArgOptions);
+  const deployment_status = getInput('deployment-status', requiredArgOptions);
+  const deployment_description = getInput('deployment-description', notRequiredArgOptions);
+  const entity = getInput('entity', requiredArgOptions);
+  const instance = getInput('instance', requiredArgOptions);
+  const server_url = _context.serverUrl;
+  const workflow_run_id = _context.runId;
+  const owner = _context.repo.owner;
+  const repo = _context.repo.repo;
 
   if (!Object.values(ALLOWED_STATUSES).includes(deployment_status.toLowerCase())) {
     throw { name: INVALID_STATUS, message: `Invalid deployment status: ${deployment_status}` };
@@ -77,8 +77,4 @@ function setup() {
   );
 }
 
-module.exports = {
-  INVALID_STATUS,
-  setup,
-  context
-};
+export { INVALID_STATUS, setup, context };

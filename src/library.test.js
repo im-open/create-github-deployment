@@ -1,6 +1,6 @@
-const { describe, test, expect, beforeEach } = require('@jest/globals');
-const { setup, INVALID_STATUS } = require('./library.js');
-const { ALLOWED_STATUSES } = require('./deployments.js');
+import { describe, test, expect, beforeEach } from '@jest/globals';
+import { setup, INVALID_STATUS } from './library.js';
+import { ALLOWED_STATUSES } from './deployments.js';
 
 const inputKey = key => `INPUT_${key.replace(/ /g, '-').toUpperCase()}`;
 
