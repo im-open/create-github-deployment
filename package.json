@@ -13,7 +13,6 @@
   "keywords": [],
   "author": "wtw",
   "license": "ISC",
-  "type": "module",
   "dependencies": {
     "@actions/core": "^3.0.1",
     "@actions/github": "^9.1.1",
